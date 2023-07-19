@@ -44,10 +44,11 @@ class Scrapping:
        return -1
     
     def open_anime_tabs(self, anime_list):
-       first_anime = anime_list.pop()
+       animes = anime_list.copy()
+       first_anime = animes.pop()
        self.open_browser(first_anime['url'])
        browser = self.get_browser()
-       for anime in anime_list:
+       for anime in animes:
           browser.open_new_tab(anime['url'])
     
     def open_browser(self, url):
