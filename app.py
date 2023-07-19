@@ -1,8 +1,17 @@
 from src.notion import Notion
-from src.scraping import Scrpping
+from src.scraping import Scrapping
+from src.filter import Filter
 
-scrap = Scrpping()
+
+scrap = Scrapping()
 ntn = Notion()
-anime_jk = scrap.get_anime_list()
-scrap.open_anime_tabs(anime_jk)
-# animes_notion = ntn.get_data()
+
+animes_jk = scrap.get_anime_list()
+animes_notion = ntn.get_data()
+filter = Filter(animes_notion, animes_jk)
+animes_to_show = filter.get_animes_to_show()
+scrap.open_anime_tabs(animes_to_show)
+ntn.update_animes(animes_to_show)
+
+
+

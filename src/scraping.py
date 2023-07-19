@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 import webbrowser
 import subprocess
 
-class Scrpping:
+class Scrapping:
     driver = None
     bravePath = "C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe"
     def __init__(self):
@@ -18,8 +18,8 @@ class Scrpping:
         self.driver.get("https://jkanime.net")
         anime_list_container = self.driver.find_element(by=By.CLASS_NAME, value='anime_programing')
         anime_list = anime_list_container.find_elements(by= By.CLASS_NAME, value='bloqq')
-        recent_anime_list = list(filter(lambda anime: self.is_recent(anime), anime_list))
-        parsed_anime_list = list(map(lambda anime: self.parse_anime(anime), recent_anime_list))
+        recent_anime_list = list(filter(self.is_recent, anime_list))
+        parsed_anime_list = list(map(self.parse_anime, recent_anime_list))
         self.driver.quit()
         return parsed_anime_list
 
@@ -31,7 +31,7 @@ class Scrpping:
     def parse_anime(self, anime):
         split_anime = anime.text.split('\n')
         anime_dictonary = {
-            'anime': split_anime[0],
+            'name': split_anime[0],
             'episodie': self.get_episodie_number(split_anime[1]),
             'url': anime.get_attribute('href')
         }
