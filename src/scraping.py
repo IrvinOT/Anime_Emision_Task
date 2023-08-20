@@ -14,15 +14,24 @@ class Scrapping:
         options.page_load_strategy = 'eager'
         self.driver =  webdriver.Chrome(options=options)
 
-    def get_anime_list(self):
+    def close(self):
+       self.driver.quit()
+
+    def get_jk_anime_list(self):
         self.driver.get("https://jkanime.net")
         anime_list_container = self.driver.find_element(by=By.CLASS_NAME, value='anime_programing')
         anime_list = anime_list_container.find_elements(by= By.CLASS_NAME, value='bloqq')
         recent_anime_list = list(filter(self.is_recent, anime_list))
         parsed_anime_list = list(map(self.parse_anime, recent_anime_list))
-        self.driver.quit()
         return parsed_anime_list
+    
 
+    def get_anime_flv_list(self):
+       self.driver.get("https://www3.animeflv.net")
+       anime_list_container = self.driver.find_elements(by=By.CLASS_NAME, value='fa-play')
+       anime_list_container.pop(0) #remove first element
+       parsed_anime_list = list(map(self.parse_anime_left, anime_list_container))
+       return parsed_anime_list
 
     def is_recent(self,anime):
         anime_text = anime.text
@@ -33,6 +42,15 @@ class Scrapping:
         anime_dictonary = {
             'name': split_anime[0],
             'episodie': self.get_episodie_number(split_anime[1]),
+            'url': anime.get_attribute('href')
+        }
+        return anime_dictonary
+    
+    def parse_anime_left(self, anime):
+        split_anime = anime.text.split('\n')
+        anime_dictonary = {
+            'name': split_anime[1],
+            'episodie': self.get_episodie_number(split_anime[0]),
             'url': anime.get_attribute('href')
         }
         return anime_dictonary

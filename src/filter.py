@@ -1,16 +1,21 @@
 class Filter:
     animes_jk = None
+    animes_flv = None
     animes_notion = None
 
-    def __init__(self, notion, jk):
+    def __init__(self, notion, jk, flv):
         self.animes_notion = notion
         self.animes_jk = jk
+        self.animes_flv = flv
+
     
     def get_animes_to_show(self):
         anime_names = list(map(lambda anime: anime['Name'], self.animes_notion))
         anime_in_jk = list(filter(lambda anime: anime['name'] in anime_names, self.animes_jk))
-        
-        animes_to_show = list( anime_notion for anime in anime_in_jk if(anime_notion := self.set_anime_notion(anime)) is not None)
+        jk_names = list(map(lambda anime: anime['name'], self.animes_jk))
+        anime_in_flv = list(filter(lambda anime: (anime['name'] in anime_names and anime['name'] not in jk_names), self.animes_flv))
+        animes = anime_in_jk + anime_in_flv
+        animes_to_show = list( anime_notion for anime in animes if(anime_notion := self.set_anime_notion(anime)) is not None)
         return animes_to_show
     
     def set_anime_notion(self, anime):
@@ -25,3 +30,4 @@ class Filter:
     def get_anime_notioon(self, anime):
         name = anime['name']
         return next(filter(lambda row: row['Name'] == name, self.animes_notion), None)
+    
